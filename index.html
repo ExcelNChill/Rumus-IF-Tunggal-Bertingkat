@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial Excel Animasi Interaktif: Fungsi Logika</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: Calibri, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f5f5f5; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { width: 100%; max-width: 900px; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        
+        .header { margin-bottom: 25px; border-bottom: 2px solid #217346; padding-bottom: 15px; }
+        .header h1 { color: #217346; font-size: 24px; margin-bottom: 8px; }
+        .header p { color: #555; font-size: 15px; line-height: 1.5; }
+
+        .xl { border: 1px solid #b0b0b0; border-radius: 6px; overflow: hidden; background: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .xl.top-xl { margin-bottom: 20px; }
+        .tbar { padding: 8px 14px; display: flex; align-items: center; gap: 10px; }
+        .macs { display: flex; gap: 6px; }
+        .mac { width: 12px; height: 12px; border-radius: 50%; }
+        .tbar-t { color: #fff; font-size: 13px; font-weight: 500; letter-spacing: 0.5px; }
+        .ribbon { background: #f3f9f5; border-bottom: 1px solid #c8dfc8; padding: 5px 10px; display: flex; gap: 15px; }
+        .rb { font-size: 12px; color: #1a5c33; padding: 4px 8px; border-radius: 3px; cursor: default; transition: background 0.2s; }
+        .rb:hover { background: #e2f0e2; }
+        .fbar { display: flex; align-items: center; border-bottom: 1px solid #d0d0d0; background: #fff; height: 30px; }
+        .nb { width: 80px; min-width: 80px; padding: 0 8px; font-family: 'Consolas', 'Courier New', monospace; font-size: 13px; color: #333; border-right: 1px solid #d0d0d0; height: 100%; display: flex; align-items: center; font-weight: bold; background: #f9f9f9; }
+        .ffx { padding: 0 12px; color: #217346; font-size: 14px; border-right: 1px solid #d0d0d0; height: 100%; display: flex; align-items: center; font-style: italic; font-weight: 700; background: #f9f9f9; }
+        .ft { flex: 1; padding: 0 12px; font-family: 'Consolas', 'Courier New', monospace; font-size: 14px; color: #111; display: flex; align-items: center; }
+        
+        .gw { position: relative; overflow: hidden; background: #e6e6e6; }
+        table { border-collapse: collapse; width: 100%; table-layout: fixed; background: #fff; }
+        .cn { width: 35px; height: 24px; background: #e0e0e0; border-right: 1px solid #c8c8c8; border-bottom: 1px solid #c8c8c8; }
+        .ch { background: #f0f0f0; border-right: 1px solid #c8c8c8; border-bottom: 1px solid #c8c8c8; text-align: center; font-size: 13px; color: #444; height: 24px; font-weight: normal; padding: 0; transition: all 0.2s; }
+        .ch.hl { background: #d0e8d0; color: #1a4d2e; font-weight: bold; border-bottom: 2px solid #217346; }
+        .rn { background: #f0f0f0; border-right: 1px solid #c8c8c8; border-bottom: 1px solid #dfdfdf; font-size: 13px; color: #444; text-align: center; width: 35px; padding: 0; transition: all 0.2s; }
+        .rn.hl { background: #d0e8d0; color: #1a4d2e; font-weight: bold; border-right: 2px solid #217346; }
+        .c { height: 28px; border-right: 1px solid #e0e0e0; border-bottom: 1px solid #e0e0e0; font-size: 14px; padding: 0 8px; vertical-align: middle; color: #222; background: #fff; outline: none; cursor: cell; white-space: nowrap; overflow: hidden; }
+        .c.r { font-family: 'Consolas', monospace; }
+        .c.hdr { background: #e8f4e8; font-weight: bold; color: #1a4d2e; text-align: center; border-bottom: 2px solid #b0d0b0; }
+        .c.lbl { color: #333; font-weight: 500; }
+        .c.inp { background: #fffbe6; cursor: text; transition: background 0.2s; }
+        .c.inp:hover { background: #fff5c2; }
+        .c.inp:focus { outline: 2px solid #217346; outline-offset: -2px; z-index: 2; position: relative; background: #fff; box-shadow: 0 0 5px rgba(33,115,70,0.3); }
+        .c.editing { font-family: 'Consolas', 'Courier New', monospace; font-size: 14px; color: #000; text-align: left; background: #fff; padding-left: 5px; }
+        
+        .xlcur { position: absolute; border: 2.5px solid #217346; pointer-events: none; z-index: 15; opacity: 0; transition: top .35s cubic-bezier(.4,0,.2,1), left .35s cubic-bezier(.4,0,.2,1), width .35s, height .35s, opacity .2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .xlcur::after { content: ''; position: absolute; bottom: -5px; right: -5px; width: 8px; height: 8px; background: #217346; border: 1.5px solid #fff; cursor: crosshair; }
+        .asvg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 14; }
+        .mou { position: absolute; pointer-events: none; z-index: 20; opacity: 0; transition: top .4s cubic-bezier(.4,0,.2,1), left .4s cubic-bezier(.4,0,.2,1), opacity .2s; filter: drop-shadow(1px 2px 3px rgba(0,0,0,0.3)); }
+        
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        .bcur { display: inline-block; width: 1.5px; height: 14px; background: #000; margin-left: 2px; vertical-align: middle; animation: blink .8s step-end infinite; }
+        
+        .sbar { background: #217346; color: #fff; font-size: 12px; padding: 4px 16px; display: flex; gap: 25px; justify-content: space-between; min-height: 24px; transition: background 0.3s; }
+        .sbar span { display: flex; align-items: center; gap: 5px; }
+        
+        /* --- KONTROL BOX (TABS) --- */
+        .ctrl { padding: 20px; display: flex; flex-direction: column; background: #fff; border-radius: 8px; border: 1px solid #e9ecef; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); width: 100%; }
+        .formula-tabs { display: flex; gap: 10px; flex-wrap: wrap; width: 100%; }
+        .tab-btn { padding: 10px 20px; border: 1px solid #ccc; background: #fff; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; color: #555; transition: all 0.2s; }
+        .tab-btn:hover:not(:disabled) { border-color: #bbb; background: #f9f9f9; }
+        .tab-btn.active { background: #217346; color: white; border-color: #217346; box-shadow: 0 2px 4px rgba(33,115,70,0.3); }
+        .tab-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        
+        .ctrl-divider { width: 100%; height: 1px; background: #e9ecef; margin: 18px 0; }
+        .ctrl-actions { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; width: 100%; }
+        
+        .btnr { padding: 10px 20px; background: #217346; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.2s; box-shadow: 0 2px 4px rgba(33,115,70,0.3); display: flex; align-items: center; gap: 8px; }
+        .btnr:hover:not(:disabled) { background: #1a5c33; transform: translateY(-1px); box-shadow: 0 4px 6px rgba(33,115,70,0.4); }
+        .btnr:active:not(:disabled) { transform: translateY(0); box-shadow: 0 1px 2px rgba(33,115,70,0.3); }
+        .btnr:disabled { opacity: 0.6; cursor: not-allowed; box-shadow: none; }
+        
+        .btng { padding: 10px 16px; background: #fff; color: #555; border: 1px solid #ccc; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.2s; display: flex; align-items: center; gap: 6px; outline: none; }
+        .btng:hover:not(:disabled) { background: #f0f0f0; border-color: #bbb; color: #333; }
+        .btng:disabled { opacity: 0.6; cursor: not-allowed; }
+        
+        .ctrl-info { font-size: 13px; color: #666; margin-left: auto; display: flex; align-items: center; gap: 6px; font-style: italic; }
+
+        /* --- SHORT EXPLANATION BOX (NEW CANVAS DI ATAS INPUT) --- */
+        .short-info-box { background: #f4f9f5; border-left: 4px solid #217346; border-radius: 6px; padding: 16px 20px; margin-bottom: 25px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); font-size: 14.5px; color: #333; line-height: 1.6; }
+        .short-info-box .formula-text { font-family: 'Consolas', 'Courier New', monospace; color: #0000ff; font-weight: bold; display: block; margin-top: 6px; font-size: 14px;}
+
+        /* --- DETAILED EXPLANATION BOX (DI PALING BAWAH) --- */
+        .explanation-box { background: #f8f9fa; border-left: 4px solid #217346; border-radius: 6px; padding: 25px; margin-top: 25px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .explanation-box h3 { color: #217346; margin-bottom: 20px; font-size: 18px; display: flex; align-items: center; gap: 8px; }
+        .explanation-box h4 { color: #333; margin-top: 15px; margin-bottom: 8px; font-size: 15px; }
+        .explanation-box p, .explanation-box ul { color: #555; font-size: 14.5px; line-height: 1.6; margin-bottom: 12px; }
+        .explanation-box ul { padding-left: 22px; }
+        .explanation-box li { margin-bottom: 6px; }
+        .code-snippet { font-family: 'Consolas', 'Courier New', monospace; background: #e8f4e8; color: #155724; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 13.5px; }
+
+        /* --- DIVIDER --- */
+        .divider { margin: 10px 0 25px 0; display: flex; align-items: center; gap: 12px; }
+        .divider-line { flex: 1; height: 1px; background: linear-gradient(to right, transparent, #ccc, transparent); }
+        .divider-txt { font-size: 14px; color: #555; font-weight: 600; white-space: nowrap; display: flex; align-items: center; gap: 8px; background: #f5f5f5; padding: 0 10px; border-radius: 12px; }
+        .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #217346; display: inline-block; animation: pulse 2s ease-in-out infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.3); box-shadow: 0 0 8px rgba(33,115,70,0.6); } }
+        
+        .flash-green { animation: flashCell 1s ease-out; font-weight: bold; color: #1a5c33; background: #e2f0e2; }
+        @keyframes flashCell { 0% { background-color: #a8e6cf; } 100% { background-color: #e2f0e2; } }
+
+        .f-text { color: #0000ff; }
+        .s-text { color: #a31515; }
+
+        @media (max-width: 768px) {
+            .container { padding: 15px; }
+            .ctrl-actions { flex-direction: column; align-items: stretch; }
+            .ctrl-info { margin-left: 0; justify-content: center; margin-top: 10px; }
+            .sbar { flex-wrap: wrap; justify-content: center; gap: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Simulasi Fungsi Logika Excel IF</h1>
+        <p>Pelajari eksekusi penulisan rumus IF, IF Bertingkat, dan IFS secara visual.</p>
+    </div>
+
+    <!-- ANIMATION CANVAS (WORKBOOK ATAS) -->
+    <div class="xl top-xl">
+        <div class="tbar" style="background:#217346">
+            <div class="macs"><div class="mac" style="background:#ff5f56"></div><div class="mac" style="background:#ffbd2e"></div><div class="mac" style="background:#27c93f"></div></div>
+            <span class="tbar-t">LaporanNilai.xlsx - Excel</span>
+        </div>
+        <div class="ribbon">
+            <span class="rb" style="background:#e2f0e2; font-weight:bold;">Beranda</span>
+            <span class="rb">Sisipkan</span>
+            <span class="rb">Tata Letak</span>
+            <span class="rb">Rumus</span>
+            <span class="rb">Data</span>
+        </div>
+        <div class="fbar">
+            <div class="nb" id="t-nb"></div>
+            <div class="ffx"><i>fx</i></div>
+            <div class="ft" id="t-ft"></div>
+        </div>
+        <div class="gw" id="t-gw">
+            <table>
+                <colgroup>
+                    <col style="width:35px">
+                    <col style="width:160px">
+                    <col style="width:120px">
+                    <col style="width:440px">
+                    <col style="width:auto">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th class="cn"></th>
+                        <th class="ch" id="t-chA">A</th>
+                        <th class="ch" id="t-chB">B</th>
+                        <th class="ch" id="t-chC">C</th>
+                        <th class="ch" id="t-chD">D</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td class="rn" id="t-rn1">1</td><td class="c hdr">Nama Siswa</td><td class="c hdr">Nilai Ujian</td><td class="c hdr">Status / Predikat</td><td class="c hdr"></td></tr>
+                    <tr><td class="rn" id="t-rn2">2</td><td class="c lbl">Budi Setiawan</td><td class="c r" id="t-B2" style="text-align: center;">85</td><td class="c" id="t-C2"></td><td class="c"></td></tr>
+                    <tr><td class="rn" id="t-rn3">3</td><td class="c lbl">Siti Aminah</td><td class="c r" id="t-B3" style="text-align: center;">60</td><td class="c" id="t-C3"></td><td class="c"></td></tr>
+                    <tr><td class="rn" id="t-rn4">4</td><td class="c lbl">Andi Pratama</td><td class="c r" id="t-B4" style="text-align: center;">92</td><td class="c" id="t-C4"></td><td class="c"></td></tr>
+                    <tr><td class="rn" id="t-rn5">5</td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"></td></tr>
+                </tbody>
+            </table>
+            <!-- Animation Overlays -->
+            <div class="xlcur" id="cur"></div>
+            <svg class="asvg">
+                <rect id="ants" fill="rgba(33,115,70,.1)" stroke="#217346" stroke-width="2" stroke-dasharray="6,4" opacity="0">
+                    <animate attributeName="stroke-dashoffset" from="0" to="-20" dur="0.5s" repeatCount="indefinite"/>
+                </rect>
+            </svg>
+            <div class="mou" id="mou">
+                <svg width="18" height="22" viewBox="0 0 16 20">
+                    <path d="M1,1 L1,16 L5,12 L7.5,18 L9.8,17 L7.2,11 L12,11 Z" fill="#fff" stroke="#000" stroke-width="1.5" stroke-linejoin="round"/>
+                </svg>
+            </div>
+        </div>
+        <div class="sbar" id="sbar">
+            <span id="sbar-left">Siap</span>
+            <span id="sbar-right"></span>
+        </div>
+    </div>
+
+    <!-- CONTROLS BOX -->
+    <div class="ctrl">
+        <div class="formula-tabs">
+            <button class="tab-btn active" onclick="setFormulaType('if', this)">Rumus IF Tunggal</button>
+            <button class="tab-btn" onclick="setFormulaType('if_nested', this)">Rumus IF Bertingkat</button>
+            <button class="tab-btn" onclick="setFormulaType('ifs', this)">Rumus IFS</button>
+        </div>
+        
+        <div class="ctrl-divider"></div>
+        
+        <div class="ctrl-actions">
+            <button class="btnr" id="runBtn" onclick="runAnimation()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                Jalankan Animasi
+            </button>
+            <button class="btng" id="resetBtn" onclick="resetSimulation()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+                Reset
+            </button>
+            <div class="ctrl-info">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#217346" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                Edit nilai di bawah sebelum memulai
+            </div>
+        </div>
+    </div>
+
+    <!-- SHORT EXPLANATION BOX (KOTAK BARU SEPERTI GAMBAR) -->
+    <div class="short-info-box" id="short-info-box">
+        <!-- Content Injected by JS -->
+    </div>
+
+    <!-- DIVIDER AREA INPUT -->
+    <div class="divider">
+        <div class="divider-line"></div>
+        <span class="divider-txt"><span class="sync-dot"></span> Area Input Data</span>
+        <div class="divider-line"></div>
+    </div>
+
+    <!-- INPUT WORKBOOK (WORKBOOK BAWAH) -->
+    <div class="xl" style="margin-bottom: 0;">
+        <div class="tbar" style="background:#005a9e">
+            <div class="macs"><div class="mac" style="background:#ff5f56"></div><div class="mac" style="background:#ffbd2e"></div><div class="mac" style="background:#27c93f"></div></div>
+            <span class="tbar-t">DataInput.xlsx - Mode Edit</span>
+        </div>
+        <div class="fbar">
+            <div class="nb" id="b-nb">B2</div>
+            <div class="ffx"><i>fx</i></div>
+            <div class="ft" id="b-ft">85</div>
+        </div>
+        <div class="gw">
+            <table>
+                <colgroup>
+                    <col style="width:35px">
+                    <col style="width:160px">
+                    <col style="width:120px">
+                    <col style="width:340px">
+                    <col style="width:auto">
+                </colgroup>
+                <thead><tr><th class="cn"></th><th class="ch">A</th><th class="ch">B</th><th class="ch">C</th><th class="ch">D</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td class="rn">1</td>
+                        <td class="c hdr">Nama Siswa</td>
+                        <td class="c hdr">Nilai Ujian</td>
+                        <td class="c" style="font-size:12px; color:#888; font-style:italic; padding-left: 15px;">← Edit sel kuning untuk sinkronisasi otomatis</td>
+                        <td class="c"></td>
+                    </tr>
+                    <tr><td class="rn">2</td><td class="c lbl">Budi Setiawan</td><td class="c r inp" id="b-i2" contenteditable="true" style="text-align: center;">85</td><td class="c" style="background:#f9f9f9;"></td><td class="c" style="background:#f9f9f9;"></td></tr>
+                    <tr><td class="rn">3</td><td class="c lbl">Siti Aminah</td><td class="c r inp" id="b-i3" contenteditable="true" style="text-align: center;">60</td><td class="c" style="background:#f9f9f9;"></td><td class="c" style="background:#f9f9f9;"></td></tr>
+                    <tr><td class="rn">4</td><td class="c lbl">Andi Pratama</td><td class="c r inp" id="b-i4" contenteditable="true" style="text-align: center;">92</td><td class="c" style="background:#f9f9f9;"></td><td class="c" style="background:#f9f9f9;"></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- EXPLANATION BOX (DETAIL 3 POIN DI PALING BAWAH) -->
+    <div class="explanation-box" id="info-box">
+        <!-- Content Injected by JS Dynamically -->
+    </div>
+
+</div>
+
+<script>
+    // --- DATA & CONFIG ---
+    const formulas = {
+        'if': {
+            title: 'Mengenal Fungsi IF Tunggal',
+            shortHtml: '<strong>Fungsi IF:</strong> Mengecek satu kondisi. Jika Nilai >= 75, maka "Lulus", jika tidak "Gagal".<span class="formula-text">=IF(logical_test, value_if_true, value_if_false)</span>',
+            syntax: '=IF(kondisi_yang_dicek, jika_benar, jika_salah)',
+            kegunaan: 'Fungsi <strong>IF Tunggal</strong> digunakan ketika kita hanya punya <strong>satu syarat</strong>. Ibaratnya komputer disuruh memilih: "Jika syaratnya terpenuhi, maka hasilnya A. Jika tidak, hasilnya B."',
+            contoh: '=IF(B2>=75, "Lulus", "Gagal")',
+            caraKerja: [
+                'Excel akan mengecek nilai di dalam sel B2.',
+                'Apakah nilai di B2 lebih besar atau sama dengan 75?',
+                'Jika <strong>YA</strong>, Excel akan memunculkan teks <strong>"Lulus"</strong>.',
+                'Jika <strong>TIDAK</strong>, Excel akan memunculkan teks <strong>"Gagal"</strong>.'
+            ],
+            getParts: (val) => [
+                { type: 'text', text: '=IF(' },
+                { type: 'ref', cell: 't-B2', hlCol: 'B', hlRow: '2', text: 'B2' },
+                { type: 'text', text: '>=75, "Lulus", "Gagal")' }
+            ],
+            eval: (val) => val >= 75 ? "Lulus" : "Gagal"
+        },
+        'if_nested': {
+            title: 'Mengenal Fungsi IF Bertingkat (Nested IF)',
+            shortHtml: '<strong>IF Bertingkat:</strong> Menyelipkan IF di dalam IF untuk multi-kondisi. (>=90: A, >=80: B, else: C).<span class="formula-text">=IF(kondisi1, hasil1, IF(kondisi2, hasil2, hasil_false))</span>',
+            syntax: '=IF(kondisi1, hasil1, IF(kondisi2, hasil2, hasil_kondisi tidak terpenuhi))',
+            kegunaan: 'Digunakan saat kita punya <strong>lebih dari dua kemungkinan hasil</strong> (misalnya menentukan nilai Predikat: A, B, atau C). Caranya adalah dengan memasukkan rumus IF lagi di dalam argumen "jika_salah".',
+            contoh: '=IF(B2>=90, "A", IF(B2>=80, "B", "C"))',
+            caraKerja: [
+                'Excel akan mengecek syarat paling pertama: Apakah B2 &gt;= 90?',
+                'Jika <strong>YA</strong>, langsung muncul <strong>"A"</strong> dan rumus berhenti bekerja.',
+                'Jika <strong>TIDAK</strong>, Excel akan masuk ke IF yang kedua: Apakah B2 &gt;= 80?',
+                'Jika <strong>YA</strong>, muncul <strong>"B"</strong>. Jika masih <strong>TIDAK</strong>, karena sudah tidak ada syarat lagi, otomatis akan muncul <strong>"C"</strong>.'
+            ],
+            getParts: (val) => [
+                { type: 'text', text: '=IF(' },
+                { type: 'ref', cell: 't-B2', hlCol: 'B', hlRow: '2', text: 'B2' },
+                { type: 'text', text: '>=90, "A", IF(' },
+                { type: 'ref', cell: 't-B2', hlCol: 'B', hlRow: '2', text: 'B2' },
+                { type: 'text', text: '>=80, "B", "C"))' }
+            ],
+            eval: (val) => val >= 90 ? "A" : (val >= 80 ? "B" : "C")
+        },
+        'ifs': {
+            title: 'Mengenal Fungsi IFS (Excel Terbaru)',
+            shortHtml: '<strong>Fungsi IFS:</strong> Solusi modern pengganti IF bertingkat. Mengecek kondisi berurutan, hasil dari kondisi pertama yang TRUE.<span class="formula-text">=IFS(kondisi1, hasil1, kondisi2, hasil2, ...)</span>',
+            syntax: '=IFS(kondisi1, hasil1, kondisi2, hasil2, ...)',
+            kegunaan: 'Solusi modern pengganti IF bertingkat. Mengecek kondisi secara berurutan, dan langsung memberikan hasil dari kondisi pertama yang terpenuhi (TRUE) tanpa perlu banyak tanda kurung.',
+            contoh: '=IFS(B2>=90, "A", B2>=80, "B", B2<80, "C")',
+            caraKerja: [
+                'Excel membaca syaratnya secara berurutan dari kiri ke kanan.',
+                'Cek syarat ke-1: Apakah nilainya &gt;=90? Jika ya, kasih "A". Jika tidak, lanjut ke syarat ke-2.',
+                'Cek syarat ke-2: Apakah nilainya &gt;=80? Jika ya, kasih "B". Jika tidak, lanjut ke syarat ke-3.',
+                'Cek syarat ke-3: Apakah nilainya &lt;80? Jika ya, kasih "C".',
+                '<strong>Catatan:</strong> Rumus IFS jauh lebih mudah dibaca dan anti-pusing untuk kondisi yang sangat panjang!'
+            ],
+            getParts: (val) => [
+                { type: 'text', text: '=IFS(' },
+                { type: 'ref', cell: 't-B2', hlCol: 'B', hlRow: '2', text: 'B2' },
+                { type: 'text', text: '>=90, "A", ' },
+                { type: 'ref', cell: 't-B2', hlCol: 'B', hlRow: '2', text: 'B2' },
+                { type: 'text', text: '>=80, "B", ' },
+                { type: 'ref', cell: 't-B2', hlCol: 'B', hlRow: '2', text: 'B2' },
+                { type: 'text', text: '<80, "C")' }
+            ],
+            eval: (val) => {
+                if(val >= 90) return "A";
+                if(val >= 80) return "B";
+                return "C";
+            }
+        }
+    };
+
+    const gw = document.getElementById('t-gw');
+    let isAnimating = false;
+    let currentFormulaType = 'if';
+
+    // --- TAB NAVIGATION ---
+    function setFormulaType(type, btnElement) {
+        if (isAnimating) return; // Kunci tab jika animasi sedang berjalan
+        currentFormulaType = type;
+        
+        // Update tab styling
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        if (btnElement) btnElement.classList.add('active');
+        
+        // Update explanation boxes & reset simulation
+        updateInfoBox();
+        resetSimulation();
+    }
+
+    // --- LIVE SYNC & INPUT HANDLING ---
+    ['2','3','4'].forEach(n => {
+        const inp = document.getElementById('b-i'+n);
+        const topCell = document.getElementById('t-B'+n);
+        
+        inp.addEventListener('keypress', function(e) {
+            if(isNaN(String.fromCharCode(e.which)) && e.key !== 'Enter') e.preventDefault();
+        });
+
+        inp.addEventListener('input', () => {
+            let val = inp.textContent.replace(/[^0-9]/g, '');
+            if(val === '') val = '0';
+            topCell.textContent = val;
+            document.getElementById('b-ft').textContent = val;
+        });
+
+        inp.addEventListener('focus', () => {
+            document.getElementById('b-nb').textContent = 'B'+n;
+            document.getElementById('b-ft').textContent = inp.textContent.trim();
+            setTimeout(() => document.execCommand('selectAll', false, null), 10);
+        });
+
+        inp.addEventListener('keydown', e => {
+            if(e.key === 'Enter') { 
+                e.preventDefault(); 
+                inp.blur(); 
+                const nextInp = document.getElementById('b-i' + (parseInt(n) + 1));
+                if(nextInp) nextInp.focus();
+            }
+        });
+    });
+
+    // --- EXPLANATION BOX UPDATE ---
+    function updateInfoBox() {
+        if (isAnimating) return; 
+        
+        const info = formulas[currentFormulaType];
+        
+        // Update Short Info Box (di atas input area)
+        document.getElementById('short-info-box').innerHTML = info.shortHtml;
+
+        // Update Detailed Info Box (di paling bawah)
+        let caraKerjaList = '';
+        info.caraKerja.forEach(step => {
+            caraKerjaList += `<li>${step}</li>`;
+        });
+
+        document.getElementById('info-box').innerHTML = `
+            <h3>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                ${info.title}
+            </h3>
+            
+            <h4>1. Syntax dari Rumus</h4>
+            <p>Bentuk penulisan standarnya adalah: <span class="code-snippet">${info.syntax}</span></p>
+            
+            <h4>2. Rumus ini digunakan untuk apa?</h4>
+            <p>${info.kegunaan}</p>
+            
+            <h4>3. Gimana cara kerja dan cara pakenya?</h4>
+            <p>Pada animasi di atas, kita menyimulasikan penggunaan rumus: <span class="code-snippet">${info.contoh.replace(/</g, '&lt;')}</span></p>
+            <ul>
+                ${caraKerjaList}
+            </ul>
+        `;
+    }
+    updateInfoBox(); // Init on load
+
+    // --- HELPERS FOR ANIMATION ---
+    const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+    function cPos(id){
+        const el = document.getElementById(id);
+        const wr = gw.getBoundingClientRect();
+        const er = el.getBoundingClientRect();
+        return { t: er.top - wr.top, l: er.left - wr.left, w: er.width, h: er.height };
+    }
+
+    async function moveCur(id){
+        const r = cPos(id);
+        const c = document.getElementById('cur');
+        c.style.opacity = '1';
+        c.style.top = r.t + 'px'; 
+        c.style.left = r.l + 'px';
+        c.style.width = r.w + 'px'; 
+        c.style.height = r.h + 'px';
+        await sleep(350);
+    }
+
+    async function moveMou(id, offsetX = 0.5, offsetY = 0.5){
+        const r = cPos(id);
+        const m = document.getElementById('mou');
+        m.style.opacity = '1';
+        m.style.top = (r.t + r.h * offsetY) + 'px';
+        m.style.left = (r.l + r.w * offsetX) + 'px';
+        await sleep(450);
+    }
+
+    function showAnts(id){
+        const r = cPos(id);
+        const ants = document.getElementById('ants');
+        ants.setAttribute('x', r.l - 1); 
+        ants.setAttribute('y', r.t - 1);
+        ants.setAttribute('width', r.w + 2);
+        ants.setAttribute('height', r.h + 2);
+        ants.setAttribute('opacity', '1');
+    }
+
+    function hideAnts() { document.getElementById('ants').setAttribute('opacity', '0'); }
+
+    function hlAll(off = true) {
+        if(off) {
+            document.querySelectorAll('.rn.hl, .ch.hl').forEach(el => el.classList.remove('hl'));
+            document.getElementById('t-nb').textContent = '';
+        }
+    }
+
+    function hl(col, row) {
+        hlAll(true);
+        if(col) document.getElementById('t-ch' + col).classList.add('hl');
+        if(row) document.getElementById('t-rn' + row).classList.add('hl');
+        if(col && row) document.getElementById('t-nb').textContent = col + row;
+    }
+
+    // Typing effect function
+    async function typeText(text, targetCellId, append = false) {
+        const targetCell = document.getElementById(targetCellId);
+        const fbar = document.getElementById('t-ft');
+        let currentRaw = append ? (targetCell.dataset.raw || "") : "";
+        
+        targetCell.className = 'c editing';
+        
+        for (let i = 0; i < text.length; i++) {
+            if(!isAnimating) break; // Check abort
+            currentRaw += text[i];
+            targetCell.dataset.raw = currentRaw;
+            
+            // Mencegah simbol < dan > dibaca sebagai tag HTML yang merusak tampilan
+            let safeRaw = currentRaw.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            
+            // Format styling for display
+            let displayHTML = safeRaw
+                .replace(/(=?IFS?\()/gi, '<span class=<strong>$1</strong></span>')
+                .replace(/(".*?")/g, '<span class="s-text">$1</span>') 
+                + '<span class="bcur"></span>';
+                
+            targetCell.innerHTML = displayHTML;
+            fbar.innerHTML = displayHTML;
+            await sleep(60 + Math.random() * 40); // natural typing
+        }
+    }
+
+    // --- MAIN ANIMATION SEQUENCE ---
+    async function runAnimation() {
+        if (isAnimating) return;
+        isAnimating = true;
+        
+        // 1. Setup UI States
+        document.getElementById('runBtn').disabled = true;
+        document.getElementById('runBtn').innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> Mensimulasikan...';
+        document.getElementById('resetBtn').disabled = true;
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.disabled = true);
+        
+        const sbarL = document.getElementById('sbar-left');
+        const sbarR = document.getElementById('sbar-right');
+        sbarR.textContent = "";
+        
+        const formulaDef = formulas[currentFormulaType];
+        
+        // Clean up previous run
+        ['2','3','4'].forEach(row => {
+            const cell = document.getElementById(`t-C${row}`);
+            cell.textContent = "";
+            cell.dataset.raw = "";
+            cell.className = 'c';
+        });
+        document.getElementById('t-ft').innerHTML = '';
+        hideAnts();
+        hlAll(true);
+
+        const inputValue = parseFloat(document.getElementById('b-i2').textContent) || 0;
+        const parts = formulaDef.getParts(inputValue);
+
+        try {
+            // 2. Mouse moves to Target Cell (C2)
+            sbarL.textContent = 'Memilih sel untuk menulis rumus...';
+            await moveMou('t-C2');
+            hl('C', '2');
+            await moveCur('t-C2');
+
+            // 3. Loop through formula parts
+            sbarL.textContent = 'Menulis rumus...';
+            for (let part of parts) {
+                if(!isAnimating) throw new Error("Aborted");
+
+                if (part.type === 'text') {
+                    await typeText(part.text, 't-C2', true);
+                    await sleep(200);
+                } 
+                else if (part.type === 'ref') {
+                    // Move mouse to ref cell
+                    await moveMou(part.cell);
+                    hl(part.hlCol, part.hlRow);
+                    showAnts(part.cell);
+                    
+                    // Type the cell reference
+                    await typeText(part.text, 't-C2', true);
+                    await sleep(300);
+                    hideAnts();
+                    
+                    // Return focus visual to Target Cell
+                    hl('C', '2');
+                }
+            }
+
+            // 4. Move mouse away (simulating Enter press)
+            sbarL.textContent = 'Mengeksekusi perhitungan...';
+            await moveMou('t-rn5', 0, 0); // Move away
+            document.getElementById('mou').style.opacity = '0';
+            await sleep(400);
+
+            // 5. Evaluate and Show Result
+            const targetCell = document.getElementById('t-C2');
+            const result = formulaDef.eval(inputValue);
+            
+            // Remove cursor from formula dan ubah ke simbol aman
+            let safeRaw = targetCell.dataset.raw.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            const finalFormulaHTML = safeRaw
+                .replace(/(=?IFS?\()/gi, '<span class=<strong>$1</strong></span>')
+                .replace(/(".*?")/g, '<span class="s-text">$1</span>');
+            document.getElementById('t-ft').innerHTML = finalFormulaHTML;
+            
+            // Update cell visual
+            targetCell.innerHTML = result;
+            targetCell.className = 'c flash-green';
+
+            // 6. ANIMASI AUTO-FILL DRAG KE BAWAH
+            sbarL.textContent = 'Menggunakan Auto-Fill untuk sel di bawahnya...';
+            hl('C', '2'); // Pastikan baris ke-2 menyala sebagai acuan awal
+            
+            const mou = document.getElementById('mou');
+            mou.style.opacity = '1';
+            const c2Pos = cPos('t-C2');
+            
+            // Mouse bergerak ke Fill Handle (ujung kanan bawah cell C2)
+            mou.style.top = (c2Pos.t + c2Pos.h - 8) + 'px';
+            mou.style.left = (c2Pos.l + c2Pos.w - 8) + 'px';
+            await sleep(400);
+
+            // Ganti kursor mouse jadi ikon crosshair (+) khas fitur tarik rumus excel
+            mou.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16"><path d="M7,0 L9,0 L9,7 L16,7 L16,9 L9,9 L9,16 L7,16 L7,9 L0,9 L0,7 L7,7 Z" fill="#000" stroke="#fff" stroke-width="1"/></svg>';
+            await sleep(200);
+
+            // Setting durasi ditarik secara halus ke bawah
+            const c4Pos = cPos('t-C4');
+            mou.style.transition = 'top 0.8s linear, left 0.8s linear, opacity 0.2s';
+            const cur = document.getElementById('cur');
+            cur.style.transition = 'height 0.8s linear, top 0.35s, left 0.35s, width 0.35s, opacity 0.2s';
+            
+            // Eksekusi Tarik / Drag ke cell C4
+            mou.style.top = (c4Pos.t + c4Pos.h - 8) + 'px';
+            cur.style.height = (c4Pos.t - c2Pos.t + c4Pos.h) + 'px'; // Expand border mengikuti mouse
+            
+            // Nyalakan header row secara berurutan seiring mouse turun
+            document.getElementById('t-chC').classList.add('hl');
+            setTimeout(() => document.getElementById('t-rn3').classList.add('hl'), 300);
+            setTimeout(() => document.getElementById('t-rn4').classList.add('hl'), 600);
+            
+            await sleep(800); // Tunggu sampai animasi drag mendarat di cell bawah
+            
+            // 7. Kalkulasi dan tampilkan instan hasil formula baris 3 & 4
+            const r3Input = parseFloat(document.getElementById('b-i3').textContent) || 0;
+            const r4Input = parseFloat(document.getElementById('b-i4').textContent) || 0;
+            
+            const r3Cell = document.getElementById('t-C3');
+            const r4Cell = document.getElementById('t-C4');
+            
+            r3Cell.innerHTML = formulaDef.eval(r3Input);
+            r4Cell.innerHTML = formulaDef.eval(r4Input);
+            
+            r3Cell.className = 'c flash-green';
+            r4Cell.className = 'c flash-green';
+            
+            await sleep(400);
+
+            // Kembalikan cursor jadi bentuk panah default dan hilangkan dari layar
+            mou.innerHTML = '<svg width="18" height="22" viewBox="0 0 16 20"><path d="M1,1 L1,16 L5,12 L7.5,18 L9.8,17 L7.2,11 L12,11 Z" fill="#fff" stroke="#000" stroke-width="1.5" stroke-linejoin="round"/></svg>';
+            mou.style.transition = 'top .4s cubic-bezier(.4,0,.2,1), left .4s cubic-bezier(.4,0,.2,1), opacity .2s';
+            cur.style.transition = 'top .35s cubic-bezier(.4,0,.2,1), left .35s cubic-bezier(.4,0,.2,1), width .35s, height .35s, opacity .2s';
+            
+            await moveMou('t-rn5', 0, 0);
+            mou.style.opacity = '0';
+            await sleep(200);
+
+            // 8. Finish
+            sbarL.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><polyline points="20 6 9 17 4 12"></polyline></svg> Selesai';
+            sbarR.innerHTML = `Rumus berhasil disalin ke bawah`;
+
+        } catch (e) {
+            console.error("Animation reset/aborted:", e);
+        } finally {
+            isAnimating = false;
+            document.getElementById('runBtn').disabled = false;
+            document.getElementById('runBtn').innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Simulasikan Ulang';
+            document.getElementById('resetBtn').disabled = false;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.disabled = false);
+        }
+    }
+
+    // --- RESET SIMULATION ---
+    function resetSimulation() {
+        isAnimating = false;
+        
+        document.getElementById('cur').style.opacity = '0';
+        document.getElementById('mou').style.opacity = '0';
+        hideAnts();
+        hlAll(true);
+        
+        ['2','3','4'].forEach(row => {
+            const cell = document.getElementById(`t-C${row}`);
+            cell.innerHTML = '';
+            cell.dataset.raw = '';
+            cell.className = 'c';
+        });
+        
+        document.getElementById('sbar-left').innerHTML = 'Siap';
+        document.getElementById('sbar-right').innerHTML = '';
+        document.getElementById('t-ft').innerHTML = '';
+        
+        const btn = document.getElementById('runBtn');
+        btn.disabled = false;
+        btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Jalankan Animasi';
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.disabled = false);
+        
+        // Reset animasi transisi jika sebelumnya terkena auto-fill linier
+        document.getElementById('cur').style.transition = 'top .35s cubic-bezier(.4,0,.2,1), left .35s cubic-bezier(.4,0,.2,1), width .35s, height .35s, opacity .2s';
+        document.getElementById('mou').style.transition = 'top .4s cubic-bezier(.4,0,.2,1), left .4s cubic-bezier(.4,0,.2,1), opacity .2s';
+    }
+</script>
+
+</body>
+</html>
